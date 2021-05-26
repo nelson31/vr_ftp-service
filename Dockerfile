@@ -18,10 +18,11 @@ RUN apt-get install -y iputils-ping
 RUN apt-get install -y net-tools
 
 # Copiar esta o conteudo desta diretoria para o container
-COPY . ftp-server/
+COPY ./ftp-server/ /ftp-server/
+WORKDIR /ftp-server
 
 # Correr o ftp
-CMD [ "python3", "ftp-server/appftp.py" ]
+CMD [ "python3", "appftp.py" ]
 
 # Expor uma porta
 EXPOSE 2121
