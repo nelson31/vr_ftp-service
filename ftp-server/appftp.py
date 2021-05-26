@@ -51,11 +51,6 @@ class MyAuthorizer(DummyAuthorizer):
 			# Verificar se existe
 			x = requests.post('http://auth_container:5000/loginFTP', data=json.dumps(payload))
 			if x.status_code == requests.codes.ok:
-				f = open("logs.txt", "w")
-				f.write("\n")
-				f.write(x.text)
-				f.write("\n")
-				f.close()
 				# Descodificar o token
 				token_dec = decode_token(x.text)
 				valid = True
@@ -64,19 +59,6 @@ class MyAuthorizer(DummyAuthorizer):
 		except Exception as e:
 			valid = False
 
-		# Verificar se existe
-		x = requests.post('http://auth_container:5000/loginFTP', data=json.dumps(payload))
-		if x.status_code == requests.codes.ok:
-			f = open("logs.txt", "w")
-			f.write("\n")
-			f.write(x.text)
-			f.write("\n")
-			f.close()
-			# Descodificar o token
-			token_dec = decode_token(x.text)
-			valid = True
-		else:
-			valid = False
 		# Se for valido
 		if valid:
 			# adiciona um novo user/admin (perm é usado para definir as permissoes)
