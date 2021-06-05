@@ -15,11 +15,13 @@ from pyftpdlib.handlers import FTPHandler
 from pyftpdlib.authorizers import DummyAuthorizer
 from pyftpdlib.authorizers import AuthenticationFailed
 from pyftpdlib.servers import MultiprocessFTPServer
-import sys, requests, json, jwt
+import sys, requests, json, jwt, logging
 
 
 # Path para a pasta de uploads
 UPDIRECTORY = "/usr/src/ftp/"
+# Nome do ficheiro de logs
+logname = "/ftp-server/logs/logs.txt"
 
 
 '''
@@ -27,15 +29,15 @@ Fazer o decoding de um token, retornando o nome do user e o seu papel
 '''
 def decode_token(enctoken):
 
-    try:
-        payload = jwt.decode(enctoken, 
-            options={"verify_signature": False}, 
-            algorithms=["HS256"])
-        return payload
-    except jwt.ExpiredSignatureError:
-        return 'Signature expired. Please log in again.'
-    except jwt.InvalidTokenError:
-        return 'Invalid token. Please log in again.'
+	try:
+		payload = jwt.decode(enctoken, 
+			options={"verify_signature": False}, 
+			algorithms=["HS256"])
+		return payload
+	except jwt.ExpiredSignatureError:
+		return 'Signature expired. Please log in again.'
+	except jwt.InvalidTokenError:
+		return 'Invalid token. Please log in again.'
 
 
 '''
@@ -106,8 +108,20 @@ def configHandler():
 
 
 def main(arg):
-	
+
+	# configuracao de log
+	logging.basicConfig(filename=logname,
+							filemode='a',
+							format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
+							datefmt='%H:%M:%S',
+							level=logging.DEBUG)
+
+	logging.info("Running FTP Server")
+	logger = logging.getLogger()
+	# fim configuracao de log
+
 	handler = configHandler()
+
 	# porta padrão do servidor
 	porta = 2121
 	# ip onde o servidor estara a escuta de conexoes
